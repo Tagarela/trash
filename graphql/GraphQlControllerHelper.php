@@ -1,10 +1,17 @@
 <?php
 
+/**
+ * Class GraphQlControllerHelper
+ */
 class GraphQlControllerHelper {
+    /**
+     * Get Nursing Practice Question
+     * @param $request
+     * @return array
+     */
     static function getNursingPracticeQuestion($request) {
         $return_posts = array();
         $max_limit = 1000;
-        $result_count = 0;
         $loop_count = 0;
         do{
             $query_args = array(
@@ -26,7 +33,6 @@ class GraphQlControllerHelper {
                     )
                 );
             }
-
             if( isset($request['nursing-category']) || isset($request['teas-category']) || isset($request['hesi-category']) ){
                 $query_args['tax_query'] = array(
                     'relation' => 'OR',
@@ -52,11 +58,8 @@ class GraphQlControllerHelper {
             if( isset($request['id']) ){
                 $query_args['p'] = $request['id'];
             }
-
             $all_posts = query_posts($query_args);
-
             $result_count = $all_posts->post_count;
-
             foreach ($all_posts as $post_data) {
                 $single_post = array();
                 $single_post['id'] = $post_data->ID;
@@ -72,12 +75,10 @@ class GraphQlControllerHelper {
                 $acf['answer_type'] = $acf['type'];
                 $answer_text = "";
                 if($acf['answer_rationales']){
-
                     foreach ($acf['answer_rationales'] as $seperate_rationale) {
                         //return $seperate_rationale;
                         $answer_text .= $seperate_rationale['answer']['txt'] . " is " . ( empty($seperate_rationale['correct_status']) ? 'incorrect' : 'correct' ) . "\n" . $seperate_rationale['rationale'] . "\n\n";
                     }
-
                 }
                 else{
                     $answer_text = $acf['answer_desc'];

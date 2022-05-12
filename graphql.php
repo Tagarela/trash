@@ -23,15 +23,16 @@ add_action( 'graphql_register_types', function() {
         'description' => __( 'Get Nursing Practice Question', 'wp-graphql' ),
         'args' => [
             'id' => [
-                'type' => 'ID',
-                'description' => __('The ID of the user', 'wp-graphql')
+                'type' => \GraphQL\Type\Definition\Type::INT,
+                'description' => __('limit Of records', 'wp-graphql')
+            ],
+            'limit' => [
+                'type' => \GraphQL\Type\Definition\Type::INT,
+                'description' => __('limit Of records', 'wp-graphql')
             ]
         ],
         'resolve' => function($root, $args, $context, $info) {
-            $data = GraphQlControllerHelper::getNursingPracticeQuestion([
-                "limit" => 1
-            ]);
-            return $data;
+            return GraphQlControllerHelper::getNursingPracticeQuestion($args);
         }
     ]);
 });
