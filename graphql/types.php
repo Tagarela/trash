@@ -2,6 +2,7 @@
 
 /*** Register GraphQL TYPES ***/
 add_action('graphql_register_types', 'nursing_practice_question_type');
+add_action('graphql_register_types', 'user_study_plan_type');
 
 /**
  * Register nursing practice question response type
@@ -303,5 +304,29 @@ function nursing_practice_question_type()
                 }
             ]
         ],
+    ]);
+}
+
+function user_study_plan_type() {
+    register_graphql_object_type('UserStudyPlan', [
+        'description' => __("User Study Plan", ''),
+        'fields' => [
+            'id' => [
+                'type' => GraphQL\Type\Definition\Type::STRING,
+                'description' => __('Study Plan Id'),
+            ],
+            'date' => [
+                'type' => GraphQL\Type\Definition\Type::STRING,
+                'description' => __('Study Plan date'),
+            ],
+            'title' => [
+                'type' => GraphQL\Type\Definition\Type::STRING,
+                'description' => __('Study Plan title'),
+            ],
+            'mastered' => [
+                'type' => GraphQL\Type\Definition\Type::STRING,
+                'description' => __('Study Plan mastered'),
+            ]
+        ]
     ]);
 }

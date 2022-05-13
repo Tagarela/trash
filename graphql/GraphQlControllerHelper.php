@@ -1,11 +1,14 @@
 <?php
 
+use Core\Views\StudyPlans\StudyPlanRows;
+
 /**
  * Class GraphQlControllerHelper
  */
 class GraphQlControllerHelper {
     /**
      * Get Nursing Practice Question
+     *
      * @param $request
      * @return array
      */
@@ -131,5 +134,24 @@ class GraphQlControllerHelper {
         }while($result_count>=$max_limit);
 
         return $return_posts;
+    }
+
+    /**
+     * Get User Study Plan
+     *
+     * @param $userId
+     * @return \Core\Views\StudyPlans\StudyPlansFactory
+     */
+    static function getUserStudyPlan($userId) {
+        $user = new Core\User($userId);
+        $studyPlansReport = $user->getStudyPlans();
+        $educatorStudy = new \ED\Reports\StudyPlans\EducatorStudyPlans($studyPlansReport);
+        $processedStudyPlans= $educatorStudy->getProcessedStudyPlans();
+        $userStudyPlansList = [];
+        foreach ($processedStudyPlans as $key => $value) {
+            $value['id'] = $key;
+            $userStudyPlansList[] = $value;
+        }
+        return $userStudyPlansList;
     }
 }
