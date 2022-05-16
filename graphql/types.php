@@ -3,6 +3,7 @@
 /*** Register GraphQL TYPES ***/
 add_action('graphql_register_types', 'nursing_practice_question_type');
 add_action('graphql_register_types', 'user_study_plan_type');
+add_action('graphql_register_types', 'courses_output_type');
 
 /**
  * Register nursing practice question response type
@@ -326,6 +327,77 @@ function user_study_plan_type() {
             'mastered' => [
                 'type' => GraphQL\Type\Definition\Type::STRING,
                 'description' => __('Study Plan mastered'),
+            ]
+        ]
+    ]);
+}
+
+function courses_output_type() {
+    register_graphql_object_type('CourseModuleLessonOutput', [
+        'description' => __("Course Module Lesson Output", ''),
+        'fields' => [
+            'id' => [
+                'type' => GraphQL\Type\Definition\Type::STRING,
+                'description' => __('Study Plan Id'),
+            ],
+            'title' => [
+                'type' => GraphQL\Type\Definition\Type::STRING,
+                'description' => __('title'),
+            ],
+            'questions'  => [
+                'type' => GraphQL\Type\Definition\Type::INT,
+                'description' => __('questions'),
+            ]
+        ]
+    ]);
+
+    register_graphql_object_type('CourseModuleOutput', [
+        'description' => __("Course Module Output", ''),
+        'fields' => [
+            'id' => [
+                'type' => GraphQL\Type\Definition\Type::STRING,
+                'description' => __('Study Plan Id'),
+            ],
+            'title' => [
+                'type' => GraphQL\Type\Definition\Type::STRING,
+                'description' => __('title'),
+            ],
+            'lessons' => [
+                'type' => ['list_of' => 'CourseModuleLessonOutput'],
+                'description' => __('course Lessons'),
+            ]
+        ]
+    ]);
+    register_graphql_object_type('CourseOutput', [
+        'description' => __("User Study Plan", ''),
+        'fields' => [
+            'id' => [
+                'type' => GraphQL\Type\Definition\Type::STRING,
+                'description' => __('Study Plan Id'),
+            ],
+            'title' => [
+                'type' => GraphQL\Type\Definition\Type::STRING,
+                'description' => __('title'),
+            ],
+            'featuredImage' => [
+                'type' => GraphQL\Type\Definition\Type::STRING,
+                'description' => __('image '),
+            ],
+            'description' => [
+                'type' => GraphQL\Type\Definition\Type::STRING,
+                'description' => __('description'),
+            ],
+            'courseLessons' => [
+                'type' => ['list_of' => GraphQL\Type\Definition\Type::INT],
+                'description' => __('course Lessons'),
+            ],
+            'publishedLessons' => [
+                'type' => GraphQL\Type\Definition\Type::INT,
+                'description' => __('course Lessons'),
+            ],
+            'modules' => [
+                'type' => ['list_of' => 'CourseModuleOutput'],
+                'description' => __('course Modules'),
             ]
         ]
     ]);

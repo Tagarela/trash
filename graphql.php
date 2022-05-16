@@ -23,12 +23,31 @@ add_action('graphql_register_types', function () {
         'description' => __('Get Study Plan List ', 'wp-graphql'),
         'args' => [],
         'resolve' => function ($root, $args, $context, $info) {
-//            $user = wp_get_current_user();
-//            if ($user->ID == 0) {
-//                throw new \GraphQL\Error\UserError('auth errror');
-//            }
-//            return GraphQlControllerHelper::getUserStudyPlan($user->ID);
-            return GraphQlControllerHelper::getUserStudyPlan(2);
+            $user = wp_get_current_user();
+            if ($user->ID == 0) {
+                throw new \GraphQL\Error\UserError('auth errror');
+            }
+            return GraphQlControllerHelper::getUserStudyPlan($user->ID);
+        }
+    ]);
+
+    /*** GET COURSES ***/
+    register_graphql_field('RootQuery', 'getCourseList', [
+        'type' =>  ['list_of' => 'CourseOutput'],
+        'description' => __('Get Course List ', 'wp-graphql'),
+        'args' => [
+            'termId' => [
+                'type' => 'ID',
+                'description' => __('The ID of the user', 'wp-graphql')
+            ]
+        ],
+        'resolve' => function ($root, $args, $context, $info) {
+            $user = wp_get_current_user();
+            if ($user->ID == 0) {
+                throw new \GraphQL\Error\UserError('auth errror');
+            }
+            $graphQlControllerHelper = new GraphQlControllerHelper();
+            return $graphQlControllerHelper->getCourseList($args['termId']);
         }
     ]);
 
