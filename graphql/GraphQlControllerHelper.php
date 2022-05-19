@@ -1,16 +1,10 @@
 <?php
 
-use Core\Views\StudyPlans\StudyPlanRows;
-use Core\Traits\Users\Data\CourseData;
-use Core\Posts\Module;
-use Core\Posts\Lesson;
-use Core\Posts\Course;
-
 /**
  * Class GraphQlControllerHelper
  */
 class GraphQlControllerHelper {
-    use CourseData;
+
     /**
      * Get Nursing Practice Question
      *
@@ -158,75 +152,5 @@ class GraphQlControllerHelper {
             $userStudyPlansList[] = $value;
         }
         return $userStudyPlansList;
-    }
-
-    /**
-     * Get courses list
-     *
-     * @param $termIdData
-     *
-     * @return array|array[]
-     */
-    function getCourseList($termIdData) {
-
-        $termId = get_slug_term_id($termIdData, 'stage');
-
-        $courseIds = $this->queryCourses($termId);
-
-        $courseList = [];
-        foreach($courseIds as $courseId) {
-            $course = new Course($courseId);
-            $moduleIds = $course->getModules(); // Why does this return Strings when it is supposed to be Ints?
-            $lessonIds = $course->getLessons();
-            $publishedLessons = 0;
-
-            $moduleList = [];
-            foreach($moduleIds as $moduleId) {
-                $module = new Module($moduleId);
-                $lessonIds = $module->getLessons();
-
-                $lessonList = [];
-                foreach($lessonIds as $lessonId) {
-                    $publishedLessons += 1;
-                    $lesson = new Lesson((int)$lessonId);
-                    $studyToolTypes = $lesson->studyToolTypes();
-                    $questions = $lesson->getQuestions();
-
-                    $studyToolList = [];
-                    if (is_array($studyToolTypes)) {
-                        foreach ($studyToolTypes as $type => $ids) {
-                            $studyToolList[] = [
-                                'count' => count($ids),
-                                'type' => post_label($type),
-                            ];
-                        }
-                    }
-
-                    $lessonList[] = [
-                        'id' => $lessonId,
-                        'title' => get_the_title($lessonId),
-                        'studyTools' => $studyToolList,
-                        'questions' => count($questions),
-                    ];
-                }
-
-                $moduleList[] = [
-                    'id' => $moduleId,
-                    'title' => get_the_title($moduleId),
-                    'lessons' => $lessonList,
-                ];
-            }
-
-            $courseList[] = [
-                'id' => $courseId,
-                'title' => get_the_title($course->getId()),
-                'featured_image' => get_the_post_thumbnail_url( $course->getId(), 'full' ),
-                'description' => $course->description(),
-                'modules' => $moduleList,
-                'courseLessons' => $lessonIds,
-                'publishedLessons' => $publishedLessons,
-            ];
-        }
-        return $courseList;
     }
 }

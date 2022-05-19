@@ -1,6 +1,8 @@
 <?php
-include_once 'graphql/types.php';
+//include_once 'graphql/types.php';
+include_once 'graphql/types/setup.php';
 include_once 'graphql/GraphQlControllerHelper.php';
+include_once 'graphql/controllers/setup.php';
 
 // Return mastered lessons based on user ID
 add_action('graphql_register_types', function () {
@@ -42,12 +44,23 @@ add_action('graphql_register_types', function () {
             ]
         ],
         'resolve' => function ($root, $args, $context, $info) {
-            $user = wp_get_current_user();
-            if ($user->ID == 0) {
-                throw new \GraphQL\Error\UserError('auth errror');
-            }
-            $graphQlControllerHelper = new GraphQlControllerHelper();
+            $graphQlControllerHelper = new CoursesGraphQLController();
             return $graphQlControllerHelper->getCourseList($args['termId']);
+        }
+    ]);
+
+    register_graphql_field('RootQuery', 'getCourse', [
+        'type' =>  'CourseDetailsOutput',
+        'description' => __('Get Course', 'wp-graphql'),
+        'args' => [
+            'id' => [
+                'type' => 'Number',
+                'description' => __('Get course by Id', 'wp-graphql')
+            ]
+        ],
+        'resolve' => function ($root, $args, $context, $info) {
+            $user = wp_get_current_user();
+            return CoursesGraphQLController::getCourse($args, $user);;
         }
     ]);
 
